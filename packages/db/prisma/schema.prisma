@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SourceType {
+  open
+  premium
+  x402
+}
+
+enum PaymentStatus {
+  pending
+  settled
+  failed
+  skipped
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  queries   Query[]
+  wallets   Wallet[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  address   String   @unique
+  provider  String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Source {
+  id               String     @id
+  title            String
+  publisher        String
+  url              String
+  type             SourceType
+  trustScore       Int
+  relevanceScore   Int
+  freshnessScore   Int
+  citationPriceUsd Decimal    @db.Decimal(12, 6)
+  walletAddress    String
+  excerpt          String
+  license          String
+  createdAt        DateTime   @default(now())
+  citations        Citation[]
+  payments         Payment[]
+}
+
+model Query {
+  id              String     @id
+  prompt          String
+  answer          String
+  totalSpentUsd   Decimal    @db.Decimal(12, 6)
+  userId          String?
+  user            User?      @relation(fields: [userId], references: [id])
+  createdAt       DateTime   @default(now())
+  citations       Citation[]
+  payments        Payment[]
+}
+
+model Payment {
+  id          String        @id
+  amountUsd   Decimal       @db.Decimal(12, 6)
+  currency    String
+  txHash      String
+  network     String
+  status      PaymentStatus
+  sourceId    String
+  source      Source        @relation(fields: [sourceId], references: [id])
+  queryId     String
+  query       Query         @relation(fields: [queryId], references: [id])
+  createdAt   DateTime      @default(now())
+}
+
+model Citation {
+  id            String        @id
+  queryId       String
+  query         Query         @relation(fields: [queryId], references: [id])
+  sourceId      String
+  source        Source        @relation(fields: [sourceId], references: [id])
+  trustScore    Int
+  paymentStatus PaymentStatus
+  txHash        String?
+  createdAt     DateTime      @default(now())
+}

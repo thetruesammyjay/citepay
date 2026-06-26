@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@citepay/ai": ["packages/ai/src"],
+      "@citepay/ai/*": ["packages/ai/src/*"],
+      "@citepay/db": ["packages/db/src"],
+      "@citepay/db/*": ["packages/db/src/*"],
+      "@citepay/payments": ["packages/payments/src"],
+      "@citepay/payments/*": ["packages/payments/src/*"],
+      "@citepay/shared": ["packages/shared/src"],
+      "@citepay/shared/*": ["packages/shared/src/*"]
+    }
+  }
+}
